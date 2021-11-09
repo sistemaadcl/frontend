@@ -4,7 +4,9 @@ import "mdbvue/lib/css/mdb.min.css";
 import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
+import moment from 'moment'
 
+Vue.prototype.moment = moment
 import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);

@@ -81,6 +81,38 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../components/Servicios.vue"),
   },
+  {
+    path: "/configuracion",
+    name: "configuracion",
+    meta: {
+      requireAuth: true,
+    },
+    beforeEnter: (to, from, next) => {
+      if (isRole().role === "admin") {
+        next();
+      } else {
+        next("/login");
+      }
+    },
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../components/Configuracion.vue"),
+  },
+  {
+    path: "/perfil",
+    name: "perfil",
+    meta: {
+      requireAuth: true,
+    },
+    beforeEnter: (to, from, next) => {
+      if (!(isRole().role === "admin")) {
+        next();
+      } else {
+        next("/login");
+      }
+    },
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../components/Perfils.vue"),
+  },
 ];
 
 const router = new VueRouter({
