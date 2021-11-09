@@ -3,7 +3,7 @@
     <div id="app" class="container">
       <div class="h2 pt-5 mb-5 text-white">
         <h2>
-          <b-icon  icon="person-fill"></b-icon> Agregar nuevo Producto/Catalogo
+          <b-icon icon="person-fill"></b-icon> Agregar nuevo Producto/Catalogo
         </h2>
       </div>
 
@@ -17,35 +17,35 @@
         </b-form-group>
         <b-form-group label-cols-lg="1" label="Marca">
           <b-form-input
-            v-model.trim="product.telefono"
+            v-model.trim="product.brand"
             placeholder="Ingrese el número de Marca..."
           ></b-form-input>
         </b-form-group>
         <b-form-group label-cols-lg="1" label="Precio">
           <b-form-input
-            v-model.trim="product.email"
+            v-model.trim="product.price"
             placeholder="Ingrese el Precio..."
           ></b-form-input>
         </b-form-group>
         <b-form-group label-cols-lg="1" label="Precio Venta">
           <b-form-input
-            v-model.number="product.identificacion"
+            v-model.number="product.price_sell"
             placeholder="Ingrese el precio de venta..."
           ></b-form-input>
         </b-form-group>
-        <b-form-group label-cols-lg="1" label="Precio Cantidad">
+        <b-form-group label-cols-lg="1" label="Cantidad">
           <b-form-input
-            v-model.number="product.identificacion"
+            v-model.number="product.stock"
             placeholder="Ingrese la cantidad..."
           ></b-form-input>
         </b-form-group>
-        <b-button @click="validarCliente(cliente)" variant="primary"
+        <b-button @click.prevent="createdProduct()" variant="primary"
           >Agregar</b-button
         >
       </b-card>
       <!-- Lista de clientes -->
       <div>{{ this.output }}</div>
-      <section>
+      <section v-if="products.length > 1">
         <!--for demo wrap-->
         <h1>Seccion de productos</h1>
         <div class="tbl-header">
@@ -66,11 +66,11 @@
           <table cellpadding="0" cellspacing="0" border="0">
             <tbody>
               <tr v-for="product of products" :key="product.id">
-                <td>{{product.name}}</td>
-                <td>{{product.brand}}</td>
-                <td>{{product.price}}</td>
-                <td>{{product.price_sell}}</td>
-                <td>{{product.quantity}}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.brand }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.price_sell }}</td>
+                <td>{{ product.stock }}</td>
                 <td>
                   <a href="#" class="btn btn-primary">Editar</a>
                   <a href="#" class="btn btn-danger">x</a>
@@ -80,42 +80,12 @@
           </table>
         </div>
       </section>
-      <b-modal
-        v-model="openModal"
-        @ok="cancelarEventoModal"
-        title="Ingresa los nuevos datos del servidor"
-      >
-        <b-form-group label="Nombre">
-          <b-form-input
-            v-model.trim="nuevoCliente.descripcion"
-            placeholder="Ingrese el nombre"
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group label="Teléfono">
-          <b-form-input
-            v-model.trim="nuevoCliente.telefono"
-            placeholder="Ingrese el número de teléfono"
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group label="Correo electrónico">
-          <b-form-input
-            v-model.trim="nuevoCliente.email"
-            placeholder="Ingrese el email"
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group label="Identificación">
-          <b-form-input
-            v-model.number="nuevoCliente.identificacion"
-            placeholder="Ingrese la identificación"
-          ></b-form-input>
-        </b-form-group>
-      </b-modal>
+      <div v-else><h2 class="mt-5 text-white">No hay productos...</h2></div>
     </div>
   </div>
 </template>
 
 <script>
-
 import axios from "axios";
 import { mdbTbl, mdbTblHead, mdbTblBody } from "mdbvue";
 
@@ -129,31 +99,37 @@ export default {
   data() {
     return {
       output: null,
-      products: [
-        {
-          id: 1,
-          name: "Abraham",
-          brand: "Avon",
-          price: "$1.38",
-          price_sell: "$2.01",
-          quantity: 5,
-        }
-      ],
+      products: [],
       product: {
         name: "",
         brand: "",
         price: "",
         price_sell: "",
-        quantity: "",
+        stock: "",
       },
-      nuevoCliente: {
-        descripcion: "",
-        telefono: "",
-        email: "",
-        identificacion: "",
-      },
-      openModal: false,
     };
+  },
+  mounted(){
+    this.getAllProducts()
+  },
+  methods: {
+    createdProduct() {
+      axios
+        .post("http://localhost:4000/api/v1/products", this.product)
+        .then((data) => {
+          this.product = {
+            name: "",
+            brand: "",
+            price: "",
+            price_sell: "",
+            stock: "",
+          };
+        });
+    },
+    getAllProducts() {
+      axios.get( "http://localhost:4000/api/v1/products" )
+        .then( data => this.products = data.data );
+    }
   },
 };
 </script>
@@ -190,7 +166,6 @@ table {
   background: -webkit-linear-gradient(left, #1b9e67, #1e96a1);
   background: linear-gradient(to right, #1b9e67, #1e96a1);
   border: 1px solid #3b9ea5;
-  
 }
 th {
   padding: 20px 15px;
