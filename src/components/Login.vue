@@ -26,9 +26,6 @@
               >
                 Iniciar sesión
               </b-button>
-              <router-link to="/">
-                <a>Registrarse</a>
-              </router-link>
             </form>
           </b-card-body>
         </b-card>

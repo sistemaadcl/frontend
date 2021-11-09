@@ -20,17 +20,22 @@
               >{{ infoToken.username }}</mdb-dropdown-toggle
             >
             <mdb-dropdown-menu>
-                <div
-                  class="m-0"
-                  v-if="infoToken.role == 'cont' || infoToken.role == 'admin'">
-                    <mdb-dropdown-item class="w-full" to="/contabilidad"
-                    > <b-icon icon="list-task"></b-icon> Contabilidad
-                    </mdb-dropdown-item>
-                </div>
-                <div
-                  v-if="infoToken.role == 'invent' || infoToken.role == 'admin'">
-                  <mdb-dropdown-item to="/servicios"><b-icon icon="envelope"></b-icon> Inventario</mdb-dropdown-item>
-                </div>
+              <div
+                class="m-0"
+                v-if="infoToken.role == 'cont' || infoToken.role == 'admin'"
+              >
+                <mdb-dropdown-item class="w-full" to="/contabilidad">
+                  <b-icon icon="list-task"></b-icon> Contabilidad
+                </mdb-dropdown-item>
+              </div>
+              <div
+                v-if="infoToken.role == 'invent' || infoToken.role == 'admin'"
+              >
+                <mdb-dropdown-item to="/servicios"
+                  ><b-icon icon="envelope"></b-icon>
+                  Inventario</mdb-dropdown-item
+                >
+              </div>
               <div>
                 <div
                   v-if="infoToken.role == 'sale' || infoToken.role == 'admin'"
@@ -43,6 +48,16 @@
                     Catalogo</mdb-dropdown-item
                   >
                 </div>
+              </div>
+              <div v-if="infoToken.role == 'admin'">
+                <mdb-dropdown-item to="/configuracion"
+                  ><b-icon icon="person"></b-icon>Perfil</mdb-dropdown-item
+                >
+              </div>
+              <div v-if="!(infoToken.role == 'admin')">
+                <mdb-dropdown-item to="/perfil"
+                  ><b-icon icon="person"></b-icon>Perfil</mdb-dropdown-item
+                >
               </div>
             </mdb-dropdown-menu>
           </mdb-dropdown>
