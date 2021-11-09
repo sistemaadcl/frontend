@@ -11,33 +11,28 @@
       <b-collapse id="nav-collapse" is-nav class="d-flex justify-content-end">
         <b-navbar-nav v-if="$route.name !== 'Principal'" class="px-5">
           <mdb-dropdown tag="li" class="nav-item">
-            <mdb-dropdown-toggle tag="a" navLink color="gray" slot="toggle" waves-fixed>{{
-              infoToken.username
-            }}</mdb-dropdown-toggle>
+            <mdb-dropdown-toggle
+              tag="a"
+              navLink
+              color="gray"
+              slot="toggle"
+              waves-fixed
+              >{{ infoToken.username }}</mdb-dropdown-toggle
+            >
             <mdb-dropdown-menu>
-              <mdb-dropdown-item>
                 <div
-                  class="d-flex"
-                  v-if="infoToken.role == 'cont' || infoToken.role == 'admin'"
-                >
-                  <b-dropdown-item to="/contabilidad"
-                    ><b-icon icon="list-task"></b-icon> Contabilidad
-                  </b-dropdown-item>
-                </div></mdb-dropdown-item
-              >
-              <mdb-dropdown-item>
+                  class="m-0"
+                  v-if="infoToken.role == 'cont' || infoToken.role == 'admin'">
+                    <mdb-dropdown-item class="w-full" to="/contabilidad"
+                    > <b-icon icon="list-task"></b-icon> Contabilidad
+                    </mdb-dropdown-item>
+                </div>
                 <div
-                  class="d-flex"
-                  v-if="infoToken.role == 'invent' || infoToken.role == 'admin'"
-                >
-                  <b-dropdown-item to="/servicios"
-                    ><b-icon icon="envelope"></b-icon> Inventario
-                  </b-dropdown-item>
-                </div></mdb-dropdown-item
-              >
+                  v-if="infoToken.role == 'invent' || infoToken.role == 'admin'">
+                  <mdb-dropdown-item to="/servicios"><b-icon icon="envelope"></b-icon> Inventario</mdb-dropdown-item>
+                </div>
               <div>
                 <div
-                  class=""
                   v-if="infoToken.role == 'sale' || infoToken.role == 'admin'"
                 >
                   <mdb-dropdown-item to="/cotizaciones" exact
@@ -47,10 +42,8 @@
                     ><b-icon icon="tag-fill"></b-icon> Ventas
                     Catalogo</mdb-dropdown-item
                   >
-                </div></div
-              >
-              <div class="dropdown-divider"></div>
-              <mdb-dropdown-item>Separated link</mdb-dropdown-item>
+                </div>
+              </div>
             </mdb-dropdown-menu>
           </mdb-dropdown>
           <b-nav-item @click="logout">Salir</b-nav-item>
@@ -99,7 +92,7 @@ export default {
 </script>
 
 <style>
-  .dropdown{
-    box-shadow: 0;
-  }
+.dropdown {
+  box-shadow: 0;
+}
 </style>
