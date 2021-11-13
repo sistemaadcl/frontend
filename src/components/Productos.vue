@@ -1,10 +1,50 @@
 <template>
   <div class="app-background">
     <div id="app" class="container">
-      <div class="h2 pt-5 mb-5 text-white">
+      <div class="h2 d-flex justify-content-center pt-5 mb-5 text-white">
         <h2>
           <b-icon icon="person-fill"></b-icon> Agregar nuevo Producto/Catalogo
         </h2>
+        <div>
+          <b-button
+            class="m-0 ml-3"
+            variant="warning"
+            v-b-modal.modal-prevent-closing
+            >Agregar a catalogo</b-button
+          >
+
+          <b-modal
+            id="modal-prevent-closing"
+            ref="modal"
+            title="Agregar productos al catalogo"
+            @show="resetModal"
+            @hidden="resetModal"
+            @ok="handleOk"
+          >
+            <form ref="form" @submit.stop.prevent="handleSubmit">
+              <label> Elije un catalogo </label>
+              <div>
+                <b-form-select
+                  v-model="selected"
+                  :options="options"
+                ></b-form-select>
+              </div>
+              <label> Elije un producto </label>
+              <div>
+                <b-form-select
+                  v-model="selectedTwo"
+                  :options="optionsTwo"
+                ></b-form-select>
+              </div>
+              <div class="mt-3">
+                Catalogs: <strong>{{ selected }}</strong>
+              </div>
+              <div class="mt-3">
+                Product: <strong>{{ selectedTwo }}</strong>
+              </div>
+            </form>
+          </b-modal>
+        </div>
       </div>
 
       <!-- Ingrese datos de nuevo cliente -->
@@ -45,7 +85,7 @@
       </b-card>
       <!-- Lista de clientes -->
       <div>{{ this.output }}</div>
-      <section v-if="products.length > 1">
+      <section v-if="products.length > 0">
         <!--for demo wrap-->
         <h1>Seccion de productos</h1>
         <div class="tbl-header">
@@ -100,6 +140,14 @@ export default {
     return {
       output: null,
       products: [],
+      catalogs: [],
+      options: [],
+      optionsTwo: [],
+      selected: null,
+      selectedTwo: null,
+      name: "",
+      nameState: null,
+      submittedNames: [],
       product: {
         name: "",
         brand: "",
@@ -109,14 +157,17 @@ export default {
       },
     };
   },
-  mounted(){
-    this.getAllProducts()
+  mounted() {
+    this.getAllProducts();
+    this.getAllCatalogs();
+    console.log(this.products.length);
   },
   methods: {
     createdProduct() {
       axios
         .post("http://localhost:4000/api/v1/products", this.product)
         .then((data) => {
+          this.getAllProducts();
           this.product = {
             name: "",
             brand: "",
@@ -127,9 +178,67 @@ export default {
         });
     },
     getAllProducts() {
-      axios.get( "http://localhost:4000/api/v1/products" )
-        .then( data => this.products = data.data );
-    }
+      axios.get("http://localhost:4000/api/v1/products").then((data) => {
+        console.log(data);
+        this.products = data.data;
+        data.data.forEach((x) => {
+          console.log(x);
+          this.optionsTwo.push({
+            value: x._id,
+            text: x.name,
+          });
+        });
+      });
+    },
+    getAllCatalogs() {
+      axios.get("http://localhost:4000/api/v1/catalog").then((data) => {
+        data.data.forEach((x) => {
+          this.options.push({
+            value: x.name,
+            text: x.name,
+          });
+        });
+      });
+    },
+    checkFormValidity() {
+      const valid = this.$refs.form.checkValidity();
+      this.nameState = valid;
+      return valid;
+    },
+    resetModal() {
+      this.name = "";
+      this.nameState = null;
+      this.selected = null;
+      this.selectedTwo = null;
+    },
+    handleOk(bvModalEvt) {
+      // Prevent modal from closing
+      bvModalEvt.preventDefault();
+      // Trigger submit handler
+      this.handleSubmit();
+    },
+    handleSubmit() {
+      // Exit when the form isn't valid
+      if (!this.checkFormValidity()) {
+        return;
+      }
+      // Push the name to submitted names
+      this.submittedNames.push(this.name);
+
+      if (this.selected !== null || this.selectedTwo !== null) {
+        axios
+        .post("http://localhost:4000/api/v1/add/product", {
+          name: this.selected,
+          products: this.selectedTwo,
+        })
+        .then((data) => console.log(data));
+      }
+
+      // Hide the modal manually
+      this.$nextTick(() => {
+        this.$bvModal.hide("modal-prevent-closing");
+      });
+    },
   },
 };
 </script>

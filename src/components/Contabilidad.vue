@@ -1,7 +1,7 @@
 <template>
   <div class="app-background">
-    <div id="app" class="container">
-      <div class="h2 pt-5 mb-0">
+    <div id="app" class="container" v-if="cotizations.length >= 1">
+      <div  class="h2 pt-5 mb-0">
         <h2 class="text-white"><b-icon icon="list-task"></b-icon> Contabilidad</h2>
       </div>
       <section>
@@ -9,9 +9,9 @@
           <table cellpadding="0" cellspacing="0" border="0">
             <thead>
               <tr>
-                <th>Orden</th>
-                <th>Producto</th>
+                <th>Nombre</th>
                 <th>Estado</th>
+                <th>Orden</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -20,12 +20,12 @@
         <div class="tbl-content">
           <table cellpadding="0" cellspacing="0" border="0">
             <tbody>
-              <tr v-for="categoria of categorias" :key="categoria.id">
-                <td>{{categoria.orden}}</td>
-                <td>{{categoria.producto}}</td>
-                <td>{{categoria.estado}}</td>
+              <tr v-for="cotization of cotizations" :key="cotization.id">
+                <td>{{cotization.name}}</td>
+                <td>{{cotization.state && "Pagado"}}</td>
+                <td>{{cotization.state && "Procesando"}}</td>
                 <td>
-                  <a href="#" class="btn btn-primary">Aprobar</a>
+                  <button @click="handleApprove(cotization._id)" class="btn btn-primary">Aprobar</button>
                   <a href="#" class="btn btn-danger">Rechazar</a>
                 </td>
               </tr>
@@ -33,54 +33,38 @@
           </table>
         </div>
       </section>
-      <b-modal
-        v-model="openModal"
-        @ok="cancelarEventoModal"
-        title="Ingresa los nuevos datos de la categoria"
-      >
-        <b-form-group label="Nombre">
-          <b-form-input
-            v-model.trim="nuevaCategoria.tipo"
-            placeholder="Ingrese el nombre"
-          ></b-form-input>
-        </b-form-group>
-      </b-modal>
     </div>
+    <div class="mt-5" v-else> <h3 class="text-white">No hay nada que mostrar...</h3> </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
+import { v4 as uuidv4 } from 'uuid';
 
 export default {
   name: "Contabilidad",
   data() {
     return {
-      categorias: [
-        {
-          orden: "234h23j423",
-          producto: "Jabon liquido",
-          estado: "En espera",
-        },
-        {
-          orden: "34k34dfdf",
-          producto: "Cloro",
-          estado: "Pagado",
-        },
-        {
-          orden: "asds9823",
-          producto: "Jabon de cocina",
-          estado: "En espera",
-        },
-      ],
-      categoria: {
-        tipo: "",
-      },
-      nuevaCategoria: {
-        tipo: "",
-      },
-      openModal: false,
+      cotizations: [],
     };
   },
+  mounted(){
+    this.getCotizationsPay()
+  },
+  methods: {
+    getCotizationsPay(){ 
+      axios.get( "http://localhost:4000/api/v1/cotization/pay" )
+        .then( data => {
+          this.cotizations = data.data
+          console.log(data.data.length);
+        })
+    },
+    handleApprove(id){
+      axios.post( "http://localhost:4000/api/v1/create/order", { name: uuidv4(), id: id  } )
+        .then( data => this.$vToastify.success( "Orden creada correctamente" ) )
+    }
+  }
 };
 </script>
 <style>

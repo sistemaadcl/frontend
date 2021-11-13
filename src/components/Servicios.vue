@@ -1,57 +1,35 @@
 <template>
   <div class="app-background">
-    <div id="app" class="container">
+    <div id="app" class="container" v-if="orders.length >= 1">
       <div class="h2 pt-5 mb-0">
         <h2  class="text-white"><b-icon icon="wrench"></b-icon> Inventario</h2>
       </div>
-      <!-- Lista de servicios -->
-      <b-card title="Ordenes aprobadas" class="mt-3">
-        <b-list-group v-if="servicios && servicios.length">
-          <b-list-group-item
-            v-for="item of servicios"
-            :key="'servicio' + item.id_servicio"
-          >
-            <b>Orden:</b> {{ item.orden }} - <b>Producto:</b>
-            {{ item.producto }} <b>Estado:</b> {{ item.estado }}
-          </b-list-group-item>
-        </b-list-group>
-        <div v-else>
-          <p>No hay servicios registrados</p>
+      <section>
+        <div class="tbl-header">
+          <table cellpadding="0" cellspacing="0" border="0">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Estado</th>
+                <th>Cotizacion</th>
+              </tr>
+            </thead>
+          </table>
         </div>
-      </b-card>
-      <b-modal
-        v-model="openModal"
-        @ok="cancelarEventoModal"
-        title="Ingresa los nuevos datos del servicio"
-      >
-        <b-form-group label="Nombre">
-          <b-form-input
-            v-model.trim="nuevoServicio.descripcion"
-            placeholder="Ingrese el nombre"
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group label="Categoria">
-          <b-form-select
-            v-model="nuevoServicio.id_categoria"
-            :options="categorias"
-            value-field="id_categoria"
-            text-field="tipo"
-          >
-            <template #first>
-              <b-form-select-option value="" disabled
-                >Selecciona una categoria</b-form-select-option
-              >
-            </template>
-          </b-form-select>
-        </b-form-group>
-        <b-form-group label="Monto">
-          <b-form-input
-            v-model.number="nuevoServicio.monto"
-            placeholder="Ingrese el monto"
-          ></b-form-input>
-        </b-form-group>
-      </b-modal>
+        <div class="tbl-content">
+          <table cellpadding="0" cellspacing="0" border="0">
+            <tbody>
+              <tr v-for="product of orders" :key="product.id">
+                <td>{{ product.name }}</td>
+                <td>{{ product.state && "Procesado" }}</td>
+                <td>{{ product.cotizations[0] }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
+    <div class="mt-5" v-else> <h3 class="text-white"> No hay ordenes que mostrar </h3> </div>
   </div>
 </template>
 
@@ -62,42 +40,118 @@ export default {
   name: "agregar-servicio",
   data() {
     return {
-      servicios: [
-        {
-          orden: "234h23j423",
-          producto: "Jabon liquido",
-          estado: "Aprobado",
-        },
-        {
-          orden: "34k34dfdf",
-          producto: "Cloro",
-          estado: "Aprobado",
-        },
-        {
-          orden: "asds9823",
-          producto: "Jabon de cocina",
-          estado: "Aprobado",
-        },
-      ],
-      categorias: [],
-      servicio: {
-        descripcion: "",
-        id_categoria: "",
-        monto: "",
-      },
-      nuevoServicio: {
-        descripcion: "",
-        id_categoria: "",
-        monto: "",
-      },
-      openModal: false,
+      orders: [],
     };
   },
+  mounted(){
+    this.getAllOrders()
+  },
+  methods: {
+    getAllOrders() {
+      axios.get( "http://localhost:4000/api/v1/orders" )
+        .then( data => {
+          console.log(data.data);
+          this.orders = data.data
+        })
+    }
+  }
 };
 </script>
 <style>
 body {
   background: -webkit-linear-gradient(left, #25c481, #25b7c4);
   background: linear-gradient(to right, #25c481, #25b7c4);
+  font-family: "Roboto", sans-serif;
+}
+h1 {
+  font-size: 30px;
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 300;
+  text-align: center;
+  margin-bottom: 15px;
+}
+table {
+  width: 100%;
+  table-layout: fixed;
+}
+.tbl-header {
+  background-color: rgba(255, 255, 255, 0.3);
+  background: -webkit-linear-gradient(left, #1b9e67, #1e96a1);
+  background: linear-gradient(to right, #1b9e67, #1e96a1);
+  border: 1px solid #3b9ea5;
+}
+.tbl-content {
+  height: 300px;
+  overflow-x: auto;
+  margin-top: 0px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: -webkit-linear-gradient(left, #1b9e67, #1e96a1);
+  background: linear-gradient(to right, #1b9e67, #1e96a1);
+  border: 1px solid #3b9ea5;
+}
+th {
+  padding: 20px 15px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+  color: #fff;
+  text-transform: uppercase;
+}
+td {
+  padding: 15px;
+  text-align: left;
+  vertical-align: middle;
+  font-weight: 300;
+  font-size: 12px;
+  color: #fff;
+  border-bottom: solid 1px rgba(255, 255, 255, 0.1);
+}
+
+/* demo styles */
+
+section {
+  margin: 50px 0px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* follow me template */
+.made-with-love {
+  margin-top: 40px;
+  padding: 10px;
+  clear: left;
+  text-align: center;
+  font-size: 10px;
+  font-family: arial;
+  color: #fff;
+}
+.made-with-love i {
+  font-style: normal;
+  color: #f50057;
+  font-size: 14px;
+  position: relative;
+  top: 2px;
+}
+.made-with-love a {
+  color: #fff;
+  text-decoration: none;
+}
+.made-with-love a:hover {
+  text-decoration: underline;
+}
+
+/* for custom scrollbar for webkit browser*/
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+::-webkit-scrollbar-thumb {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
 </style>

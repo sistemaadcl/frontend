@@ -8,26 +8,26 @@
           <b-card-body>
             <form>
               <b-form-input
-                type="text"
-                v-model="nombre"
-                placeholder="Nombre..."
+                type="email"
+                v-model="email"
+                placeholder="Email..."
                 class="mb-2 my-3"
               ></b-form-input>
               <b-form-input
                 type="text"
-                v-model="usuario"
+                v-model="username"
                 placeholder="Usuario..."
                 class="mb-2 my-3 "
               ></b-form-input>
               <b-form-input
                 type="password"
-                v-model="clave"
+                v-model="password"
                 placeholder="Contraseña..."
                 class="my-3"
               ></b-form-input>
               <b-button
                 variant="outline-warning text-black"
-                :disabled="usuario && clave && nombre ? false : false"
+                :disabled="username && password && email ? false : false"
                 @click="enviarDatos"
                 class="my-2 btn"
               >
@@ -55,22 +55,22 @@ export default {
   name: "registro",
   data() {
     return {
-      nombre: "",
-      usuario: "",
-      clave: "",
+      email: "",
+      username: "",
+      password: "",
     };
   },
   methods: {
     enviarDatos() {
       const This = this;
-      if (!this.usuario.length || !this.clave.length || !this.nombre.length) {
+      if (!this.username.length || !this.password.length || !this.email.length) {
         return This.$vToastify.info("Llena todos los datos para continuar");
       }
       axios
-        .post("http://localhost:3000/auth/register", {
-          nombre: This.nombre,
-          usuario: This.usuario,
-          clave: This.clave,
+        .post("http://localhost:4000/api/v1/user/register", {
+          username: This.username,
+          email: This.email,
+          password: This.password,
         })
         .then((res) => {
           console.log(res);
