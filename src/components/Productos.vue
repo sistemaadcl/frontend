@@ -3,25 +3,82 @@
     <div id="app" class="container">
       <div class="h2 d-flex justify-content-center pt-5 mb-5 text-white">
         <h2>
-          <b-icon icon="person-fill"></b-icon> Agregar nuevo Producto/Catalogo
+          <b-icon icon="person-fill"></b-icon> Agregar nuevo Producto/Catálogo
         </h2>
         <div>
-          <b-button
-            class="m-0 ml-3"
-            variant="warning"
-            v-b-modal.modal-prevent-closing
-            >Agregar a catalogo</b-button
-          >
-
           <b-modal
             id="modal-prevent-closing"
             ref="modal"
-            title="Agregar productos al catalogo"
+            title="Agregar productos"
             @show="resetModal"
             @hidden="resetModal"
             @ok="handleOk"
           >
-            <form ref="form" @submit.stop.prevent="handleSubmit">
+            <!-- <form ref="form" @submit.stop.prevent="handleSubmit">
+              <label> Elije un catalogo </label>
+              <div>
+                <b-form-select
+                  v-model="selected"
+                  :options="options"
+                ></b-form-select>
+              </div>
+              <label> Elije un producto </label>
+              <div>
+                <b-form-select
+                  v-model="selectedTwo"
+                  :options="optionsTwo"
+                ></b-form-select>
+              </div>
+              <div class="mt-3">
+                Catalogs: <strong>{{ selected }}</strong>
+              </div>
+              <div class="mt-3">
+                Product: <strong>{{ selectedTwo }}</strong>
+              </div>
+            </form> -->
+            <b-card class="text-center" title="Ingrese datos del producto">
+              <b-form-group @submit.stop.prevent="handleSubmit" ref="form">
+                <b-form-input
+                  class="mt-3"
+                  v-model.trim="product.name"
+                  placeholder="Ingrese el nombre..."
+                ></b-form-input>
+              </b-form-group>
+              <b-form-group>
+                <b-form-input
+                  v-model.trim="product.brand"
+                  placeholder="Ingrese el número de Marca..."
+                ></b-form-input>
+              </b-form-group>
+              <b-form-group>
+                <b-form-input
+                  v-model.trim="product.price"
+                  placeholder="Ingrese el Precio..."
+                ></b-form-input>
+              </b-form-group>
+              <b-form-group>
+                <b-form-input
+                  v-model.number="product.price_sell"
+                  placeholder="Ingrese el precio de venta..."
+                ></b-form-input>
+              </b-form-group>
+              <b-form-group>
+                <b-form-input
+                  v-model.number="product.stock"
+                  placeholder="Ingrese la cantidad..."
+                ></b-form-input>
+              </b-form-group>
+            </b-card>
+          </b-modal>
+          <b-modal
+            id="modal-prevent-closing2"
+            ref="modal"
+            title="Agregar productos"
+            @show="resetModal"
+            @hidden="resetModal"
+            @ok="handleOkCatalog"
+          >
+            <form ref="form" @submit.stop.prevent="handleCatalog">
               <label> Elije un catalogo </label>
               <div>
                 <b-form-select
@@ -46,48 +103,30 @@
           </b-modal>
         </div>
       </div>
+      <div class="d-flex justify-content-end">
+        <b-button
+          class="m-0 ml-3"
+          variant="warning"
+          v-b-modal.modal-prevent-closing
+          >Agregar productos</b-button
+        >
+        <div v-if="products.length > 0">
+          <b-button
+            class="m-0 ml-3"
+            variant="warning"
+            v-b-modal.modal-prevent-closing2
+            >Agregar Catálogo</b-button
+          >
+        </div>
+        <div v-else></div>
+      </div>
 
       <!-- Ingrese datos de nuevo cliente -->
-      <b-card title="Ingrese datos del producto">
-        <b-form-group label-cols-lg="1" label="Nombre">
-          <b-form-input
-            v-model.trim="product.name"
-            placeholder="Ingrese el nombre..."
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group label-cols-lg="1" label="Marca">
-          <b-form-input
-            v-model.trim="product.brand"
-            placeholder="Ingrese el número de Marca..."
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group label-cols-lg="1" label="Precio">
-          <b-form-input
-            v-model.trim="product.price"
-            placeholder="Ingrese el Precio..."
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group label-cols-lg="1" label="Precio Venta">
-          <b-form-input
-            v-model.number="product.price_sell"
-            placeholder="Ingrese el precio de venta..."
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group label-cols-lg="1" label="Cantidad">
-          <b-form-input
-            v-model.number="product.stock"
-            placeholder="Ingrese la cantidad..."
-          ></b-form-input>
-        </b-form-group>
-        <b-button @click.prevent="createdProduct()" variant="primary"
-          >Agregar</b-button
-        >
-      </b-card>
       <!-- Lista de clientes -->
       <div>{{ this.output }}</div>
       <section v-if="products.length > 0">
         <!--for demo wrap-->
-        <h1>Seccion de productos</h1>
+        <h1>SECCIÓN de productos</h1>
         <div class="tbl-header">
           <table cellpadding="0" cellspacing="0" border="0">
             <thead>
@@ -157,26 +196,13 @@ export default {
       },
     };
   },
-  mounted() {
+  created() {
     this.getAllProducts();
     this.getAllCatalogs();
     console.log(this.products.length);
   },
   methods: {
-    createdProduct() {
-      axios
-        .post("http://localhost:4000/api/v1/products", this.product)
-        .then((data) => {
-          this.getAllProducts();
-          this.product = {
-            name: "",
-            brand: "",
-            price: "",
-            price_sell: "",
-            stock: "",
-          };
-        });
-    },
+    createdProduct() {},
     getAllProducts() {
       axios.get("http://localhost:4000/api/v1/products").then((data) => {
         console.log(data);
@@ -200,11 +226,11 @@ export default {
         });
       });
     },
-    checkFormValidity() {
-      const valid = this.$refs.form.checkValidity();
-      this.nameState = valid;
-      return valid;
-    },
+    // checkFormValidity() {
+    //   const valid = this.$refs.form.checkValidity();
+    //   this.nameState = valid;
+    //   return valid;
+    // },
     resetModal() {
       this.name = "";
       this.nameState = null;
@@ -219,24 +245,67 @@ export default {
     },
     handleSubmit() {
       // Exit when the form isn't valid
-      if (!this.checkFormValidity()) {
-        return;
-      }
+      // if (!this.checkFormValidity()) {
+      //   return;
+      // }
       // Push the name to submitted names
       this.submittedNames.push(this.name);
 
+      if (this.product !== {}) {
+        axios
+          .post("http://localhost:4000/api/v1/products", this.product)
+          .then((data) => {
+            this.getAllProducts();
+            this.product = {
+              name: "",
+              brand: "",
+              price: "",
+              price_sell: "",
+              stock: "",
+            };
+          });
+      }
+
       if (this.selected !== null || this.selectedTwo !== null) {
         axios
-        .post("http://localhost:4000/api/v1/add/product", {
-          name: this.selected,
-          products: this.selectedTwo,
-        })
-        .then((data) => console.log(data));
+          .post("http://localhost:4000/api/v1/add/product", {
+            name: this.selected,
+            products: this.selectedTwo,
+          })
+          .then((data) => console.log(data));
       }
 
       // Hide the modal manually
       this.$nextTick(() => {
         this.$bvModal.hide("modal-prevent-closing");
+      });
+    },
+    handleOkCatalog(bvModalEvt) {
+      // Prevent modal from closing
+      bvModalEvt.preventDefault();
+      // Trigger submit handler
+      this.handleCatalog();
+    },
+    handleCatalog() {
+      // Exit when the form isn't valid
+      // if (!this.checkFormValidity()) {
+      //   return;
+      // }
+      // Push the name to submitted names
+      this.submittedNames.push(this.name);
+
+      if (this.selected !== null || this.selectedTwo !== null) {
+        axios
+          .post("http://localhost:4000/api/v1/add/product", {
+            name: this.selected,
+            products: this.selectedTwo,
+          })
+          .then((data) => console.log(data));
+      }
+
+      // Hide the modal manually
+      this.$nextTick(() => {
+        this.$bvModal.hide("modal-prevent-closing2");
       });
     },
   },

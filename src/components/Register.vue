@@ -3,7 +3,7 @@
     <div id="app" class="container">
       <!-- <img src="../assets/svgs/pass.svg"> -->
       <div class="abs-center">
-        <b-card title="Registrarse" style="max-width: 20rem;">
+        <b-card title="Registrarse" style="max-width: 20rem">
           <img src="../assets/logo.jpg" width="80" class="" />
           <b-card-body>
             <form>
@@ -17,7 +17,7 @@
                 type="text"
                 v-model="username"
                 placeholder="Usuario..."
-                class="mb-2 my-3 "
+                class="mb-2 my-3"
               ></b-form-input>
               <b-form-input
                 type="password"
@@ -25,6 +25,12 @@
                 placeholder="Contraseña..."
                 class="my-3"
               ></b-form-input>
+              <div>
+                <b-form-select
+                  v-model="selected"
+                  :options="options"
+                ></b-form-select>
+              </div>
               <b-button
                 variant="outline-warning text-black"
                 :disabled="username && password && email ? false : false"
@@ -58,12 +64,33 @@ export default {
       email: "",
       username: "",
       password: "",
+      options: [],
+      selected: null
     };
   },
+  mounted(){
+    this.getRoles()
+  },
+
   methods: {
+    getRoles(){
+      axios
+        .get("http://localhost:4000/api/v1/roles")
+        .then( data => {
+          console.log(data);
+          data.data.forEach( roles => {
+            console.log(roles);
+            this.options.push(roles.name)
+          })
+        })
+    },
     enviarDatos() {
       const This = this;
-      if (!this.username.length || !this.password.length || !this.email.length) {
+      if (
+        !this.username.length ||
+        !this.password.length ||
+        !this.email.length
+      ) {
         return This.$vToastify.info("Llena todos los datos para continuar");
       }
       axios
@@ -71,6 +98,7 @@ export default {
           username: This.username,
           email: This.email,
           password: This.password,
+          roles: This.selected
         })
         .then((res) => {
           console.log(res);
@@ -108,7 +136,7 @@ body {
 .app-background {
 }
 
-.btn{
+.btn {
   color: black;
 }
 

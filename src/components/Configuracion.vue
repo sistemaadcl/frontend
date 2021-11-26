@@ -29,59 +29,6 @@
           </div>
         </div>
         <hr />
-        <div class="d-flex">
-          <h4>Agrega un rol a un usuario</h4>
-          <div>
-            <b-button
-              class="m-0 ml-3"
-              variant="primary"
-              v-b-modal.modal-prevent-closing
-              >Configurar Usuario</b-button
-            >
-
-            <b-modal
-              id="modal-prevent-closing"
-              ref="modal"
-              title="Submit Your Name"
-              @show="resetModal"
-              @hidden="resetModal"
-              @ok="handleOk"
-            >
-              <form ref="form" @submit.stop.prevent="handleSubmit">
-                <div class="d-flex">
-                  <h2 class="mr-1"><b-badge>admin</b-badge></h2>
-                  <h2 class="mr-1"><b-badge>invent</b-badge></h2>
-                  <h2 class="mr-1"><b-badge>sale</b-badge></h2>
-                  <h2 class="mr-1"><b-badge>cont</b-badge></h2>
-                </div>
-                <label> Elije un usuario </label>
-                <div>
-                  <b-form-select
-                    v-model="selected"
-                    :options="options"
-                  ></b-form-select>
-                </div>
-                <b-form-group
-                  class="mt-2"
-                  label="Escribe un rol"
-                  label-for="name-input"
-                  invalid-feedback="Name is required"
-                  :state="nameState"
-                >
-                  <b-form-input
-                    id="name-input"
-                    v-model="name"
-                    :state="nameState"
-                    required
-                  ></b-form-input>
-                </b-form-group>
-                <div class="mt-3">
-                  Selected: <strong>{{ selected }}</strong>
-                </div>
-              </form>
-            </b-modal>
-          </div>
-        </div>
       </b-card>
     </div>
   </div>

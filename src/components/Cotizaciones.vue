@@ -15,7 +15,7 @@
               <tr>
                 <th>Nombre</th>
                 <th>Oferta</th>
-                <th>Promocion</th>
+                <th>Promoción</th>
                 <th>Acciones</th>
               </tr>
             </thead>

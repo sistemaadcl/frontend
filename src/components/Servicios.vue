@@ -11,7 +11,7 @@
               <tr>
                 <th>Nombre</th>
                 <th>Estado</th>
-                <th>Cotizacion</th>
+                <th>Cotización</th>
               </tr>
             </thead>
           </table>
@@ -29,7 +29,7 @@
         </div>
       </section>
     </div>
-    <div class="mt-5" v-else> <h3 class="text-white"> No hay ordenes que mostrar </h3> </div>
+    <div class="mt-5" v-else> <h3 class="text-white"> No hay órdenes que mostrar </h3> </div>
   </div>
 </template>
 
