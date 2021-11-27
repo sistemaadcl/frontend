@@ -6,7 +6,34 @@
           <b-icon icon="person-badge"></b-icon>Solicitud de cotizaciones
         </h2>
       </div>
-      <!-- Lista de Servidores -->
+      <b-button
+        class="m-0 ml-3"
+        variant="warning"
+        v-b-modal.modal-prevent-closing2
+        >Agregar Cotización</b-button
+      >
+      <b-modal
+        id="modal-prevent-closing2"
+        ref="modal"
+        title="Agrega una Cotización"
+        @show="resetModal"
+        @hidden="resetModal"
+        @ok="handleSubmitCot"
+      >
+          <b-card class="text-center" title="Ingrese datos de la cotizacion">
+            <b-form-group @submit.stop.prevent="handleSubmitCot" ref="form">
+              <b-form-input
+                class="mt-3"
+                v-model.trim="cotization.name"
+                placeholder="Ingrese el nombre..."
+              ></b-form-input>
+            </b-form-group>
+            <b-form-group>
+            </b-form-group>
+            <b-form-group>
+            </b-form-group>
+          </b-card>
+      </b-modal>
       <section>
         <!--for demo wrap-->
         <div class="tbl-header">
@@ -50,7 +77,9 @@
         </div>
       </section>
     </div>
-    <div class="mt-5" v-else> <h3 class="text-white"> No hay cotizaciones que mostrar... </h3> </div>
+    <div class="mt-5" v-else>
+      <h3 class="text-white">No hay cotizaciones que mostrar...</h3>
+    </div>
     <!-- Modal agregar cotizacion al cliente -->
     <b-modal
       id="modal-prevent-closing"
@@ -74,18 +103,33 @@
       <b-modal id="modal-1" title="Cotizaciones de clientes">
         <div v-for="(res, i) of data" :key="res.id">
           <div class="container w-full">
-            <h4 class="text-center"> Cotizacion {{i + 1}} </h4>
-            <hr>
-            <p class="font-weight-bold">Nombre del cliente: <span class="font-weight-normal"> {{res.name}} {{res.lastname}} </span></p>
-            <p class="font-weight-bold">DNI: <span class="font-weight-normal"> {{res.dni}} </span></p>
+            <h4 class="text-center">Cotizacion {{ i + 1 }}</h4>
+            <hr />
+            <p class="font-weight-bold">
+              Nombre del cliente:
+              <span class="font-weight-normal">
+                {{ res.name }} {{ res.lastname }}
+              </span>
+            </p>
+            <p class="font-weight-bold">
+              DNI: <span class="font-weight-normal"> {{ res.dni }} </span>
+            </p>
             <div v-for="(product, i) of products" :key="product.id">
-              <hr>
-              <p class="font-weight-bold">Producto: {{i + 1}}  <span class="font-weight-normal"> {{product.name}}$ </span></p>
-              <p class="font-weight-bold">Precio a pagar: {{i + 1}}  <span class="font-weight-normal"> {{product.price_sell}}$ </span></p>
-              <hr>
+              <hr />
+              <p class="font-weight-bold">
+                Producto: {{ i + 1 }}
+                <span class="font-weight-normal"> {{ product.name }}$ </span>
+              </p>
+              <p class="font-weight-bold">
+                Precio a pagar: {{ i + 1 }}
+                <span class="font-weight-normal">
+                  {{ product.price_sell }}$
+                </span>
+              </p>
+              <hr />
             </div>
             <h4>Monto Total: {{ totalPriceSell }}$</h4>
-            <hr>
+            <hr />
           </div>
         </div>
         <button @click="getPay()" class="btn btn-success">Pagada</button>
@@ -102,6 +146,7 @@ export default {
   data() {
     return {
       cotizations: [],
+      cotization: {},
       clients: [],
       products: [],
       data: [],
@@ -113,13 +158,13 @@ export default {
     };
   },
   computed: {
-    totalPriceSell(){
+    totalPriceSell() {
       let sum = 0;
-      this.products.forEach( x => {
-        sum += (parseInt(x.price_sell));
-      } )
-      return sum
-    }
+      this.products.forEach((x) => {
+        sum += parseInt(x.price_sell);
+      });
+      return sum;
+    },
   },
   mounted() {
     this.getAllCatalogs();
@@ -131,9 +176,15 @@ export default {
         this.cotizations = data.data;
       });
     },
-    getPay(){
-      axios.post(`http://localhost:4000/api/v1/cotization/pay/${this.ids}`)
-        .then(data => {})
+    handleSubmitCot(){
+      axios.post("http://localhost:4000/api/v1/cotization", this.cotization).then((data) => {
+        this.getAllCatalogs()
+      });
+    },
+    getPay() {
+      axios
+        .post(`http://localhost:4000/api/v1/cotization/pay/${this.ids}`)
+        .then((data) => {});
     },
     getAllClients() {
       axios.get("http://localhost:4000/api/v1/client").then((data) => {
@@ -151,10 +202,10 @@ export default {
       axios
         .get(`http://localhost:4000/api/v1/cotization/client/${id}`)
         .then((data) => {
-          this.data = data.data.clients
-          data.data.catalog.forEach( x => {
-            this.products = x.products
-          } )
+          this.data = data.data.clients;
+          data.data.catalog.forEach((x) => {
+            this.products = x.products;
+          });
         });
     },
     verifyId(id) {
