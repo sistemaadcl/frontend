@@ -88,6 +88,7 @@
             <hr>
           </div>
         </div>
+        <button @click="getPay()" class="btn btn-success">Pagada</button>
       </b-modal>
     </div>
   </div>
@@ -105,6 +106,7 @@ export default {
       products: [],
       data: [],
       id: "",
+      ids: "",
       submittedNames: [],
       options: [],
       selected: null,
@@ -129,6 +131,10 @@ export default {
         this.cotizations = data.data;
       });
     },
+    getPay(){
+      axios.post(`http://localhost:4000/api/v1/cotization/pay/${this.ids}`)
+        .then(data => {})
+    },
     getAllClients() {
       axios.get("http://localhost:4000/api/v1/client").then((data) => {
         this.clients = data.data;
@@ -141,13 +147,13 @@ export default {
       });
     },
     getAllData(id) {
+      this.ids = id;
       axios
         .get(`http://localhost:4000/api/v1/cotization/client/${id}`)
         .then((data) => {
-          (this.data = data.data.clients)
+          this.data = data.data.clients
           data.data.catalog.forEach( x => {
             this.products = x.products
-            console.log(this.products);
           } )
         });
     },

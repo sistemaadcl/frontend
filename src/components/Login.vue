@@ -49,7 +49,6 @@ export default {
   methods: {
     enviarDatos() {
       const This = this;
-      console.log(This.usuario, This.clave);
       if (!this.usuario.length || !this.clave.length) {
         return This.$vToastify.info("Llena todos los datos para continuar");
       }

@@ -9,9 +9,10 @@
           <table cellpadding="0" cellspacing="0" border="0">
             <thead>
               <tr>
-                <th>Nombre</th>
+                <th>Cliente</th>
                 <th>Estado</th>
                 <th>Cotización</th>
+                <th>Orden</th>
               </tr>
             </thead>
           </table>
@@ -20,9 +21,10 @@
           <table cellpadding="0" cellspacing="0" border="0">
             <tbody>
               <tr v-for="product of orders" :key="product.id">
-                <td>{{ product.name }}</td>
+                <td>{{ name }} {{lastname}}</td>
                 <td>{{ product.state && "Procesado" }}</td>
-                <td>{{ product.cotizations[0] }}</td>
+                <td>{{ product.id }}</td>
+                <td>{{ product.tracking }}</td>
               </tr>
             </tbody>
           </table>
@@ -41,6 +43,8 @@ export default {
   data() {
     return {
       orders: [],
+      name: "",
+      lastname: ""
     };
   },
   mounted(){
@@ -50,8 +54,20 @@ export default {
     getAllOrders() {
       axios.get( "http://localhost:4000/api/v1/orders" )
         .then( data => {
-          console.log(data.data);
-          this.orders = data.data
+          data.data.forEach( x => {
+            x.cotizations.forEach( d => {
+              this.orders.push({
+                id: x._id,
+                state: x.state,
+                tracking: x.tracking
+              })
+              d.clients.forEach( c => {
+                this.name = c.name
+                this.lastname = c.lastname
+              })
+            } )
+          } )
+
         })
     }
   }

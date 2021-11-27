@@ -65,12 +65,10 @@ export default {
       });
     },
     getUserById() {
-      console.log(this.infoToken, "data");
       axios
         .get(`http://localhost:4000/api/v1/user/${this.infoToken.id}`)
         .then((data) => {
           this.userInfo = data.data;
-          console.log(this.userInfo);
         });
     },
     checkFormValidity() {

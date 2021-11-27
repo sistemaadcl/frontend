@@ -5,6 +5,23 @@
         <h2>
           <b-icon icon="person-fill"></b-icon> Agregar nuevo Producto/Catálogo
         </h2>
+        <div class="d-flex justify-content-end">
+          <b-button
+            class="m-0 ml-3"
+            variant="warning"
+            v-b-modal.modal-prevent-closing
+            >Agregar productos</b-button
+          >
+          <div v-if="products.length > 0">
+            <b-button
+              class="m-0 ml-3"
+              variant="warning"
+              v-b-modal.modal-prevent-closing2
+              >Agregar Catálogo</b-button
+            >
+          </div>
+          <div v-else></div>
+        </div>
         <div>
           <b-modal
             id="modal-prevent-closing"
@@ -14,28 +31,6 @@
             @hidden="resetModal"
             @ok="handleOk"
           >
-            <!-- <form ref="form" @submit.stop.prevent="handleSubmit">
-              <label> Elije un catalogo </label>
-              <div>
-                <b-form-select
-                  v-model="selected"
-                  :options="options"
-                ></b-form-select>
-              </div>
-              <label> Elije un producto </label>
-              <div>
-                <b-form-select
-                  v-model="selectedTwo"
-                  :options="optionsTwo"
-                ></b-form-select>
-              </div>
-              <div class="mt-3">
-                Catalogs: <strong>{{ selected }}</strong>
-              </div>
-              <div class="mt-3">
-                Product: <strong>{{ selectedTwo }}</strong>
-              </div>
-            </form> -->
             <b-card class="text-center" title="Ingrese datos del producto">
               <b-form-group @submit.stop.prevent="handleSubmit" ref="form">
                 <b-form-input
@@ -102,23 +97,6 @@
             </form>
           </b-modal>
         </div>
-      </div>
-      <div class="d-flex justify-content-end">
-        <b-button
-          class="m-0 ml-3"
-          variant="warning"
-          v-b-modal.modal-prevent-closing
-          >Agregar productos</b-button
-        >
-        <div v-if="products.length > 0">
-          <b-button
-            class="m-0 ml-3"
-            variant="warning"
-            v-b-modal.modal-prevent-closing2
-            >Agregar Catálogo</b-button
-          >
-        </div>
-        <div v-else></div>
       </div>
 
       <!-- Ingrese datos de nuevo cliente -->
@@ -199,16 +177,13 @@ export default {
   created() {
     this.getAllProducts();
     this.getAllCatalogs();
-    console.log(this.products.length);
   },
   methods: {
     createdProduct() {},
     getAllProducts() {
       axios.get("http://localhost:4000/api/v1/products").then((data) => {
-        console.log(data);
         this.products = data.data;
         data.data.forEach((x) => {
-          console.log(x);
           this.optionsTwo.push({
             value: x._id,
             text: x.name,
@@ -272,7 +247,7 @@ export default {
             name: this.selected,
             products: this.selectedTwo,
           })
-          .then((data) => console.log(data));
+          .then((data) => {});
       }
 
       // Hide the modal manually
@@ -300,7 +275,7 @@ export default {
             name: this.selected,
             products: this.selectedTwo,
           })
-          .then((data) => console.log(data));
+          .then((data) => {});
       }
 
       // Hide the modal manually

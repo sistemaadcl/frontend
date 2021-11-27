@@ -53,7 +53,6 @@ export default {
         .get(`http://localhost:4000/api/v1/user/${this.infoToken.id}`)
         .then((data) => {
           this.userInfo = data.data;
-          console.log(this.userInfo);
         });
     },
   },

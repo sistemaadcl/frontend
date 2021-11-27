@@ -77,9 +77,7 @@ export default {
       axios
         .get("http://localhost:4000/api/v1/roles")
         .then( data => {
-          console.log(data);
           data.data.forEach( roles => {
-            console.log(roles);
             this.options.push(roles.name)
           })
         })
@@ -101,7 +99,6 @@ export default {
           roles: This.selected
         })
         .then((res) => {
-          console.log(res);
           if (res.status == 200) {
             This.$vToastify.success(
               "Registrado con exito, prueba iniciando sesión"
