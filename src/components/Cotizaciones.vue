@@ -6,12 +6,20 @@
           <b-icon icon="person-badge"></b-icon>Solicitud de cotizaciones
         </h2>
       </div>
-      <b-button
-        class="m-0 ml-3"
-        variant="warning"
-        v-b-modal.modal-prevent-closing2
-        >Agregar Cotización</b-button
-      >
+      <div>
+        <b-button
+          class="m-0 ml-3"
+          variant="warning"
+          v-b-modal.modal-prevent-closing2
+          >Agregar Cotización</b-button
+        >
+        <b-button
+          class="m-0 ml-3"
+          variant="warning"
+          v-b-modal.modal-prevent-closing3
+          >Catalogo a cotizacion</b-button
+        >
+      </div>
       <b-modal
         id="modal-prevent-closing2"
         ref="modal"
@@ -20,19 +28,44 @@
         @hidden="resetModal"
         @ok="handleSubmitCot"
       >
-          <b-card class="text-center" title="Ingrese datos de la cotizacion">
-            <b-form-group @submit.stop.prevent="handleSubmitCot" ref="form">
-              <b-form-input
-                class="mt-3"
-                v-model.trim="cotization.name"
-                placeholder="Ingrese el nombre..."
-              ></b-form-input>
-            </b-form-group>
-            <b-form-group>
-            </b-form-group>
-            <b-form-group>
-            </b-form-group>
-          </b-card>
+        <b-card class="text-center" title="Ingrese datos de la cotizacion">
+          <b-form-group @submit.stop.prevent="handleSubmitCot" ref="form">
+            <b-form-input
+              class="mt-3"
+              v-model.trim="cotization.name"
+              placeholder="Ingrese el nombre..."
+            ></b-form-input>
+          </b-form-group>
+          <b-form-group> </b-form-group>
+          <b-form-group> </b-form-group>
+        </b-card>
+      </b-modal>
+      <b-modal
+        id="modal-prevent-closing3"
+        ref="modal"
+        title="Agrega una Cotización"
+        @show="resetModal"
+        @hidden="resetModal"
+        @ok="addCatalogCotization"
+      >
+        <b-card class="text-center" title="Ingrese datos de la cotizacion">
+          <b-form-group @submit.stop.prevent="addCatalogCotization" ref="form">
+            <label> Elije un catalogo </label>
+            <div>
+              <b-form-select
+                v-model="selected2"
+                :options="options2"
+              ></b-form-select>
+            </div>
+            <label> Elije una cotizacion </label>
+            <div>
+              <b-form-select
+                v-model="selected3"
+                :options="options3"
+              ></b-form-select>
+            </div>
+          </b-form-group>
+        </b-card>
       </b-modal>
       <section>
         <!--for demo wrap-->
@@ -155,6 +188,10 @@ export default {
       submittedNames: [],
       options: [],
       selected: null,
+      options2: [],
+      selected2: null,
+      options3: [],
+      selected3: null,
     };
   },
   computed: {
@@ -169,17 +206,46 @@ export default {
   mounted() {
     this.getAllCatalogs();
     this.getAllClients();
+    this.getAllCotizations();
   },
   methods: {
     getAllCatalogs() {
       axios.get("http://localhost:4000/api/v1/cotization").then((data) => {
         this.cotizations = data.data;
+        this.cotizations.forEach((x) => {
+          this.options3.push({
+            value: x.name,
+            text: x.name,
+          });
+        });
       });
     },
-    handleSubmitCot(){
-      axios.post("http://localhost:4000/api/v1/cotization", this.cotization).then((data) => {
-        this.getAllCatalogs()
+    getAllCotizations() {
+      axios.get("http://localhost:4000/api/v1/catalog").then((data) => {
+        data.data.forEach((x) => {
+          this.options2.push({
+            value: x._id,
+            text: x.name,
+          });
+        });
       });
+    },
+    handleSubmit2() {},
+    addCatalogCotization() {
+      axios
+        .post(
+          "http://localhost:4000/api/v1/add/catalog",
+          { name: this.selected3, catalogs: [this.selected2] }
+        )
+        .then((data) => {
+        });
+    },
+    handleSubmitCot() {
+      axios
+        .post("http://localhost:4000/api/v1/cotization", this.cotization)
+        .then((data) => {
+          this.getAllCatalogs();
+        });
     },
     getPay() {
       axios
@@ -217,7 +283,7 @@ export default {
       return valid;
     },
     resetModal() {
-      this.name = "";
+      this.cotization = "";
       this.nameState = null;
       this.selected = null;
     },
@@ -226,6 +292,7 @@ export default {
       bvModalEvt.preventDefault();
       // Trigger submit handler
       this.handleSubmit();
+      this.addCatalogCotization();
     },
     handleSubmit() {
       // Exit when the form isn't valid
@@ -246,7 +313,7 @@ export default {
               clientId: this.selected,
               cotizationId: this.id,
             })
-            .then((data) => console.log(data, "client"));
+            .then((data) => {});
         });
 
       // Hide the modal manually
