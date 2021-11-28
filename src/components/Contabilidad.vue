@@ -31,7 +31,6 @@
                 <td>{{ cotization.name }}</td>
                 <td>{{ cotization.state && "Pagado" }}</td>
                 <td>{{ cotization.state && "Procesando" }}</td>
-                <div v-if="!cotization.state">
                   <td>
                     <button
                       @click="handleApprove(cotization._id)"
@@ -41,8 +40,6 @@
                     </button>
                     <a href="#" class="btn btn-danger">Rechazar</a>
                   </td>
-                </div>
-                <div class="text-white mt-3" v-else>Cotización aprobada</div>
                 <div v-if="cotization._id === id">
                   <b-modal id="modal-1" title="Cotizaciones de clientes">
                     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -95,6 +92,7 @@ export default {
     getCotizationsPay() {
       axios.get("http://localhost:4000/api/v1/cotization/pay").then((data) => {
         this.cotizations = data.data;
+        console.log(data.data);
       });
     },
     loadModal(id){
